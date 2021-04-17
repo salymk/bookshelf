@@ -1,4 +1,3 @@
-
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
 import React, {useState, useEffect} from 'react'
@@ -7,38 +6,30 @@ import Tooltip from '@reach/tooltip'
 import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
-import './styles/colors'
 import {client} from './utils/api-client'
+import * as colors from './styles/colors'
+import {useAsync} from 'utils/hooks'
+
 
 function DiscoverBooksScreen() {
-  const [query, setQuery] = useState('')
-  const [queried, setQueried] = useState(false)
-  const [data, setData] = useState(null)
-  const [status, setStatus] = useState('idle')
-  // const [error, setError] = useState('request failed')
-  
-    const isLoading = status === 'loading'
-    const isSuccess = status === 'success'
-    const isError = status === 'fail'
+  const {data, error, run, isLoading, isError, isSuccess} = useAsync()
+
+  const [queried, setQuried] = useState(false)
+  const [query, setQuery] = useState()
+
 
   useEffect(() => {
     if(!queried) {
       return
     }
+    run(client(`books?query=${encodeURIComponent(query)}`))
 
-    setStatus('loading')
-    client(`books?query=${encodeURIComponent(query)}`)
-    .then(d => {
-      setData(d)
-      setStatus('success')
-    })
-  }, [queried, query])
-
+  }, [query, queried, run])
 
   function handleSearchSubmit(event) {
     event.preventDefault()
     setQuery(event.target.elements.search.value)
-    setQueried(true)
+    setQuried(true)
   }
 
   return (
@@ -62,12 +53,12 @@ function DiscoverBooksScreen() {
                 background: 'transparent',
               }}
             >
-              {isLoading ? <Spinner /> : <FaSearch aria-label="search" />}
+              {isLoading ? <Spinner /> : isError ? <FaTimes aria-label="error" css={{color: colors.danger}}/> : <FaSearch aria-label="search" />}
             </button>
           </label>
         </Tooltip>
       </form>
-{/* 
+
       {
         isError ? (
           <div css={{color: colors.danger}}>
@@ -75,7 +66,7 @@ function DiscoverBooksScreen() {
             <pre>{error.message}</pre>
           </div>
         ) : null
-      } */}
+      }
 
       {isSuccess ? (
         data?.books?.length ? (
