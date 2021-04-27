@@ -2,7 +2,13 @@
 
 ## 📝 Your Notes
 
-Elaborate on your learnings here in `INSTRUCTIONS.md`
+Elaborate on your learnings here in `INSTRUCTIONS.md` We used react-router-dom
+to create our different routes for the app. The routes we created are:
+'/discover' for the discover page '/book/id' for each individual book we click
+on it shows us the book in the page.
+
+We also used useMatch hook for creating active nav styles. So when we are in the
+discover route our nav items is styled to show that.
 
 ## Background
 
